@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
   <!-- 视频目录数据：里面声明 const videoList = [...]，见文件末尾说明 -->
-  <script src="video.js" type="text/javascript" crossorigin="anonymous"></script>
+  <script src="video-list.js" type="text/javascript" crossorigin="anonymous"></script>
   <!-- ArtPlayer 视频播放器 -->
   <script src="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.js"></script>
   <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/artplayer/dist/artplayer.css"> -->
@@ -863,6 +863,9 @@
         showToast(t('toastPlayError'));
         return null;
       }
+      // ArtPlayer 全局替换默认倍速档位（必须在实例化前设置）
+      Artplayer.PLAYBACK_RATE = [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0];
+      
       art=new Artplayer({
         container:'#artplayer-app',
         url: initialUrl || 'video.mp4',
@@ -874,12 +877,34 @@
         pip:false,
         autoSize:false,
         autoMini:false,
-        screenshot:false,
+        screenshot:false,        
+
+        lock: false, // 移动端显示一个 锁定按钮 ，用于隐藏底部 控制栏
+        fastForward: true, // 移动端添加长按视频快进功能
+        autoOrientation: true,  // 是否在移动端的网页全屏时，根据视频尺寸和视口尺寸，旋转播放器
+        airplay: true, // 显示 airplay 按钮
+
+        loop:false,
+        flip:false,
+        hotkey:true,
+        playbackRate:true,
+        aspectRatio:true,
+        fullscreen:true,
+        fullscreenWeb:true,
+        miniProgressBar:true,
+        mutex:true,
+        backdrop:true,
+        playsInline:true,
+        theme:'#f5c84c',
+        lang: state.language==='zh' ? 'zh-cn' : 'en',
+
         setting:false,
+
+        type: 'm3u8',
 
         flip: true, // 显示视频翻转功能
         playbackRate: true, // 开启播放速度设置面板
-        playbackRateList: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0],
+        playbackRateList: [0.5, 0.75, 1.0, 1.25, 1.5, 2.0, 3.0],
 
         controls: [
           {
@@ -904,27 +929,100 @@
             }
           }
         ],
+        layers: [
+          {
+              html: '<img src="logo.png" style="width: 99px; height: auto;">',
+              style: {
+                  position: 'absolute',
+                  top: '0px',    // 距离顶部的位置
+                  left: '0px',   // 距离左侧的位置
+                  cursor: 'pointer',
+                  zIndex: 10,     // 确保图层在视频上方
+                  opacity: '0.6',
+              },
+              click: function () {
+                  // 点击Logo时触发的动作，例如跳转官网
+                  window.open('https://www.xxooe.com');
+              }
+          }
+        ],
+        // customType: {
+        //   m3u8: function (video, url) {
+        //     if (Hls.isSupported()) {
+        //         const hls = new Hls({
+        //             xhrSetup: function (xhr, url) {
+        //                 // 1. 如果需要跨域携带 Cookie，可以开启此项：
+        //                 xhr.withCredentials = true; 
+                        
+        //                 // 2. 如果对方服务器校验了某些自定义 Header，在这里加上：
+        //                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        //             }
+        //         });
+        //         hls.loadSource(url);
+        //         hls.attachMedia(video);
+        //     }
+        //   }
+        // },
 
-        lock: true, // 移动端显示一个 锁定按钮 ，用于隐藏底部 控制栏
-        fastForward: true, // 移动端添加长按视频快进功能
-        autoOrientation: true,  // 是否在移动端的网页全屏时，根据视频尺寸和视口尺寸，旋转播放器
-        airplay: true, // 显示 airplay 按钮
-
-        loop:false,
-        flip:false,
-        hotkey:true,
-        playbackRate:true,
-        aspectRatio:false,
-        fullscreen:true,
-        fullscreenWeb:true,
-        miniProgressBar:true,
-        mutex:true,
-        backdrop:true,
-        playsInline:true,
-        theme:'#f5c84c',
-        lang: state.language==='zh' ? 'zh-cn' : 'en'
+        moreVideoAttr: {
+          crossOrigin: 'anonymous', 
+        },
       });
+
+      art.on('ready', () => {
+        // 监听键盘按下事件
+        window.addEventListener('keydown', (e) => {
+            // 如果用户正在输入框里打字，则不触发播放器快捷键
+            const activeEl = document.activeElement.tagName;
+            if (activeEl === 'INPUT' || activeEl === 'TEXTAREA') return;
+
+            switch (e.key) {
+                case ' ': // 空格键
+                    e.preventDefault(); // 阻止网页默认滚动行为
+                    art.toggle(); // 切换播放/暂停
+                    break;
+
+                case 'ArrowLeft': // 左箭头：后退 5 秒（默认是 10 秒，这里改细一点）
+                    e.preventDefault();
+                    art.seek = Math.max(0, art.currentTime - 5);
+                    art.notice.show = '后退 5 秒'; // 在播放器上显示提示
+                    break;
+
+                case 'ArrowRight': // 右箭头：前进 5 秒
+                    e.preventDefault();
+                    art.seek = Math.min(art.duration, art.currentTime + 5);
+                    art.notice.show = '前进 5 秒';
+                    break;
+
+                case 'ArrowUp': // 上箭头：音量增加 5%
+                    e.preventDefault();
+                    art.volume = Math.min(1, art.volume + 0.05);
+                    art.notice.show = `音量: ${Math.round(art.volume * 100)}%`;
+                    break;
+
+                case 'ArrowDown': // 下箭头：音量减少 5%
+                    e.preventDefault();
+                    art.volume = Math.max(0, art.volume - 0.05);
+                    art.notice.show = `音量: ${Math.round(art.volume * 100)}%`;
+                    break;
+                    
+                case 'f': // 附加：按 F 键切换全屏
+                case 'F':
+                    e.preventDefault();
+                    art.fullscreen = !art.fullscreen;
+                    break;
+            }
+        });
+    });
+
       art.on('video:ended', ()=>{ playNext('next'); });
+      // art.on('contextmenu:show', () => {
+      //     const menu = art.template.$contextmenu;
+      //     const items = menu.querySelectorAll('.art-contextmenu-item');
+      //     // 移除最后一个版本号节点
+      //     if (items.length) items[items.length - 1].remove();
+      // });
+
       return art;
     }
 
@@ -1272,6 +1370,7 @@
       setPlaymodeUI();
       // checkForUpdate();
       ensureArtplayer('video.mp4', 'poster.webp');
+      // ensureArtplayer('https://ukzyvod3.ukubf5.com/20260715/yTSkaBZz/index.m3u8', 'poster.webp');
     }
 
     document.addEventListener('DOMContentLoaded', init);
