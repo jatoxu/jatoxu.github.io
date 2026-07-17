@@ -1251,15 +1251,6 @@
       // 快捷键统一交给外层的 document keydown 监听处理（5秒快进快退 / 5%音量步进 /
       // N,P 切换视频 / F 收藏），避免和 ArtPlayer 自己的 hotkey 重复触发。
 
-      // art.on('video:ended', ()=>{ playNext('next'); });
-
-      // art.on('contextmenu:show', () => {
-      //     const menu = art.template.$contextmenu;
-      //     const items = menu.querySelectorAll('.art-contextmenu-item');
-      //     // 移除最后一个版本号节点
-      //     if (items.length) items[items.length - 1].remove();
-      // });
-
       // 首次初始化时的 ready 事件（注意：这里使用全局变量 currentStorageKey）
       art.on('ready', () => {
         const lastTime = localStorage.getItem(currentStorageKey);
@@ -1290,43 +1281,6 @@
         localStorage.removeItem(currentStorageKey);
         console.log('视频播放完毕，已清除播放记录:', currentStorageKey);
       });
-
-      // // 1. 当视频准备就绪（ready）时，读取上次的播放时间并跳转
-      // art.on('ready', () => {
-      //     const lastTime = localStorage.getItem(storageKey);
-      // console.log(storageKey);
-      // console.log(lastTime);
-
-      //     if (lastTime) {
-      //         const parsedTime = parseFloat(lastTime);
-      //         // 避免视频已经播放完，重复打开时直接跳转到片尾导致卡死或循环，通常判断如果距离结束还有5秒以上才跳转
-      //         if (art.duration - parsedTime > 5) {
-      //             art.currentTime = parsedTime;
-      //             console.log(`已为您自动跳转到上次播放位置：${formatTime(parsedTime)}`);
-                  
-      //             // 可选：弹窗提示用户已跳转
-      //             art.notice.show = `已自动为您跳转到 ${formatTime(parsedTime)}`;
-      //         }
-      //     }
-      // });
-
-      // // 2. 监听播放进度更新事件，实时保存当前播放时间（防抖处理：每1秒保存一次，避免过于频繁操作 localStorage）
-      // let lastSaveTime = 0;
-      // art.on('video:timeupdate', () => {
-      //     const currentTime = art.currentTime;
-      // console.log(currentTime);
-      //     // 每一秒保存一次，并且在视频未结束时保存
-      //     if (currentTime - lastSaveTime > 1 && art.duration - currentTime > 3) {
-      //         localStorage.setItem(storageKey, currentTime);
-      //         lastSaveTime = currentTime;
-      //     }
-      // });
-
-      // // 3. 视频播放完毕后，清除缓存的播放记录，防止下次打开时直接卡在片尾
-      // art.on('video:ended', () => {
-      //     localStorage.removeItem(storageKey);
-      //     console.log('视频播放完毕，已清除播放记录');
-      // });
 
       return art;
     }
