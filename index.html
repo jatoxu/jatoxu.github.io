@@ -1190,27 +1190,6 @@
                 }
             }
         ],
-        // customType: {
-        //   m3u8: function (video, url) {
-        //     if (Hls.isSupported()) {
-        //         const hls = new Hls({
-        //             xhrSetup: function (xhr, url) {
-        //                 // 1. 如果需要跨域携带 Cookie，可以开启此项：
-        //                 xhr.withCredentials = true; 
-                        
-        //                 // 2. 如果对方服务器校验了某些自定义 Header，在这里加上：
-        //                 xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        //             }
-        //         });
-        //         hls.loadSource(url);
-        //         hls.attachMedia(video);
-        //     }
-        //   }
-        // },
-
-          // moreVideoAttr: {
-          //   crossOrigin: 'anonymous', 
-          // },
           
           moreVideoAttr: {
             crossOrigin: 'anonymous',
@@ -1220,39 +1199,6 @@
             size: 20,
             timeout: 40
           },
-          // HLS缓冲核心配置
-          // plugins: [
-          //   artplayerPluginHls({
-          //     hlsConfig: {
-          //       // 关键：最大缓冲30秒视频（默认30，可改40/50，越大缓存越多）
-          //       maxBufferLength: 40,
-          //       // 内存缓冲上限60MB
-          //       maxBufferSize: 60 * 1000 * 1000,
-          //       // 缓存不足到该值时开始预下载分片
-          //       maxMaxBufferLength: 50,
-          //       // 直播保留向后缓存60秒
-          //       backBufferLength: 60,
-          //       enableWorker: true,
-          //       lowLatencyMode: false, // 关闭低延迟，换取更大缓冲
-          //     }
-          //   })
-          // ],
-          // customType: {
-          //     m3u8: function (video, url, art) {
-          //         // 需要先引入 hls.js
-          //         if (Hls.isSupported()) {
-          //             var hls = new Hls({
-          //                 maxBufferLength: 60, // 将向前缓冲的最大时长增加到 60 秒（默认通常为30秒）
-          //                 maxMaxBufferLength: 120, // 最大可缓冲总时长
-          //             });
-          //             hls.loadSource(url);
-          //             hls.attachMedia(video);
-          //             art.hls = hls; // 挂载到 art 实例上方便后续销毁等操作
-          //         } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-          //             video.src = url;
-          //         }
-          //     }
-          // }
       });
 
       // 快捷键统一交给外层的 document keydown 监听处理（5秒快进快退 / 5%音量步进 /
