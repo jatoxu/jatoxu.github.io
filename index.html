@@ -2,7 +2,7 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>聚合视频站 - Miao Video</title>
+  <title>喵影 - Miao Video</title>
   <meta name="referrer" content="no-referrer" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
@@ -112,7 +112,7 @@
       flex-shrink: 0;
     }
     .logo-area { display: flex; align-items: center; gap: 10px; }
-    .pikachu-box {
+    .miao-box {
       width: 72px; height: 72px; border-radius: 50%; padding: 4px;
       background:
         radial-gradient(circle at 30% 0, rgba(255,255,255,0.65), rgba(255,230,140,1)),
@@ -120,10 +120,11 @@
       box-shadow: 0 0 18px rgba(255,215,130,1), 0 14px 28px rgba(0,0,0,0.95);
       border: 2px solid rgba(255,238,190,1);
       display: flex; align-items: center; justify-content: center;
-      animation: pika-float 2.4s ease-in-out infinite;
+      animation: miao-float 2.4s ease-in-out infinite;
     }
-    .pikachu-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
-    @keyframes pika-float { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-5px);} }
+    .miao-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+    @keyframes miao-float { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-5px);} }
     .title-text h1 {
       margin: 0; font-size: 18px; letter-spacing: 1px;
       text-shadow: 0 0 12px rgba(255,212,95,0.9), 0 0 26px rgba(255,176,117,0.7);
@@ -474,11 +475,22 @@
       }
     }
     @media (max-width: 480px) {
+      .miao-box {
+        width: 36px; height: 36px; border-radius: 50%; padding: 4px;
+        background:
+          radial-gradient(circle at 30% 0, rgba(255,255,255,0.65), rgba(255,230,140,1)),
+          radial-gradient(circle at 70% 100%, rgba(255,150,200,0.9), rgba(255,220,130,0.9));
+        box-shadow: 0 0 18px rgba(255,215,130,1), 0 14px 28px rgba(0,0,0,0.95);
+        border: 2px solid rgba(255,238,190,1);
+        display: flex; align-items: center; justify-content: center;
+        animation: miao-float 2.4s ease-in-out infinite;
+      }
+      .miao-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
       .app { margin: 8px; padding: 8px 8px 14px; }
       .video-title { font-size: 15px; }
-      .ban-slot { height: 92px; border-radius: 12px; }
+      .ban-slot { height: 70px; border-radius: 12px; }
       .ban-slot img {
-        height: 90px;
+        height: 70px;
         width: 100%;
         border-radius: 12px;
       }
@@ -497,11 +509,11 @@
   <div class="app">
     <header class="ripple-target">
       <div class="logo-area">
-        <div class="pikachu-box ripple-target">
-          <img src="mao.png" alt="logo" class="pikachu-img">
+        <div class="miao-box ripple-target">
+          <img src="mao.png" alt="logo" class="miao-img">
         </div>
         <div class="title-text">
-          <h1 data-i18n="appTitle">聚合视频站</h1>
+          <h1 data-i18n="appTitle">喵影</h1>
         </div>
       </div>
       <div class="header-controls">
@@ -614,7 +626,7 @@
     // ===================== 语言包 =====================
     const LANGS = {
       zh: {
-        appTitle:"聚合视频站",
+        appTitle:"喵影",
         shortcutHint:"快捷键：Space 播放/暂停 · ←/→ 快进快退 · ↑/↓ 音量 · N/P 切换视频 · F 收藏",
         shortcutModalTitle:"快捷键说明",
         videoPlaceholderTitle:"暂未选择视频",
@@ -696,7 +708,7 @@
 
     function setLanguage(lang){
       state.language = (lang === 'en') ? 'en' : 'zh';
-      try{ localStorage.setItem('pikachu-video-lang', state.language); }catch(e){}
+      try{ localStorage.setItem('miao-video-lang', state.language); }catch(e){}
       document.querySelectorAll('.lang-btn').forEach(btn=>{
         btn.classList.toggle('active', btn.dataset.lang === state.language);
       });
@@ -727,8 +739,8 @@
     };
 
     const RECO_BATCH_SIZE = 100;   //推荐视频数量
-    const LIBRARY_STORAGE_KEY = 'pikachu-video-favorites-v1';
-    const PLAYMODE_STORAGE_KEY = 'pikachu-video-playmode-tabs';
+    const LIBRARY_STORAGE_KEY = 'miao-video-favorites-v1';
+    const PLAYMODE_STORAGE_KEY = 'miao-video-playmode-tabs';
 
     // ===================== 搜索数据源配置 =====================
     // 'js'   : 直接复用 video-list.js 里已经加载好的目录数据（默认，无需额外请求）
@@ -1639,7 +1651,7 @@
     // ===================== 初始化 =====================
     function init(){
       setupDOM();
-      try{ const lg=localStorage.getItem('pikachu-video-lang'); if(lg) state.language=lg; }catch(e){}
+      try{ const lg=localStorage.getItem('miao-video-lang'); if(lg) state.language=lg; }catch(e){}
       loadLibraryFromStorage();
       loadPlayModeTabs();
       setupParticles();
